@@ -1,12 +1,10 @@
 export const getSaleNFTsScript = `
-import ProjectR from 0x342967d90036e986
-import NonFungibleToken from 0x342967d90036e986
-import BloxmithMarketplace from 0x342967d90036e986
-
-
+import ProjectR from 0xf951707a4bc85ce4
+import NonFungibleToken from 0x631e88ae7f1d7c20
+import BloxmithMarketplace from 0xf951707a4bc85ce4
 
 pub fun main(account: Address): {UInt64: UFix64} {
-  let saleCollection = getAccount(account).getCapability(/public/ProjectRSaleCollection)
+  let saleCollection = getAccount(account).getCapability(/public/SaleCollection)
                         .borrow<&BloxmithMarketplace.SaleCollection{BloxmithMarketplace.SaleCollectionPublic}>()
                         ?? panic("Could not borrow the user's SaleCollection")
 

@@ -178,7 +178,7 @@ function NavScrollExample(props) {
               Login{" "}
             </Button>
           )}
-          {props?.address?.addr === "0x342967d90036e986" ? (
+          {props?.address?.addr === "0x4543634b09bac984" ? (
             <Button type="submit" onClick={handleShow}>
               Mint Token{" "}
             </Button>

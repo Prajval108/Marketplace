@@ -56,13 +56,13 @@ function App() {
   let accountProofService = {
     f_type: "account-proof",
     f_vsn: "2.0.0",
-    address: "0x342967d90036e986",
+    address: "0x4543634b09bac984",
     nonce: "171064cb3b2e8f8b2625dfecd63a3ff8497b1f37ff149626838645f079fff339",
     signatures: [
       {
         f_type: "CompositeSignature",
         f_vsn: "1.0.0",
-        addr: "0x342967d90036e986",
+        addr: "0x4543634b09bac984",
         keyId: 0,
         signature:
           "12c4012370f3914d56130010904bcc812314e1ef470171b78604d6e5f9c08f0f7023d758b4b3ec563a4a8f747b4f7853ab67128a9b89a3257d372e4c0fe7bd39",

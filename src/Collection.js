@@ -18,7 +18,7 @@ function Collection(props) {
   }, []);
 
   // useEffect(()=> {
-  //   getData(0x342967d90036e986)
+  //   getData(0x4543634b09bac984)
   // }, [])
 
   // const getData = async (address) => {

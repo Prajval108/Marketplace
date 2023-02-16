@@ -90,11 +90,11 @@ function BasicExample({ nftData, data, address }) {
     setTxInProgress(true);
     setTxStatus(-1);
     handleShow1();
+    console.log("purchaseId", id)
     try {
       const transactionId = await fcl.mutate({
         cadence: purchaseTx,
         args: (arg, t) => [
-          arg("TestTxnId", t.String),
           arg(address, t.Address),
           arg(parseInt(id), t.UInt64),
         ],

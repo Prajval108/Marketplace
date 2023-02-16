@@ -1,23 +1,24 @@
 export const transferTx = `
-
-import Rumble from 0x342967d90036e986
+import Rumble from 0xa5e9977792ad9c12
 import FungibleToken from 0x9a0766d93b6608b7
 
-transaction (Recipient: Address, amount: UFix64) {
+transaction(to: Address, amount: UFix64) {
 
-  prepare(acct: AuthAccount) {
-    let sender = acct.borrow<&Rumble.Vault>(from: /storage/RumbleVault)
-                  ?? panic ("Could not borrow the sender resources reference")
+  let SignerVault: &Rumble.Vault
+  let RecipientVault: &Rumble.Vault{FungibleToken.Receiver}
 
-    let RecipientVault = getAccount(Recipient).getCapability(/public/RumblePublic)
-                          .borrow<&Rumble.Vault{FungibleToken.Receiver}>()
-                          ?? panic("Could not get Recipient Vault reference")
+  prepare(signer: AuthAccount) {
+    self.SignerVault = signer.borrow<&Rumble.Vault>(from: Rumble.VaultStoragePath)
+              ?? panic("Signer does not have a Rumble vault set up.")
 
-    RecipientVault.deposit(from: <- sender.withdraw(amount: amount))
+    self.RecipientVault = getAccount(to).getCapability(Rumble.ReceiverPublicPath)
+            .borrow<&Rumble.Vault{FungibleToken.Receiver}>()
+            ?? panic("Recipient does not have a Bloxsmith Token Vault set up.")
   }
 
   execute {
-    log("Token Transfer Successfully")    
+    self.RecipientVault.deposit(from: <- self.SignerVault.withdraw(amount: amount))
   }
 }
 `
+ 
