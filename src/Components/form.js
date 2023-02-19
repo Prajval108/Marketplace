@@ -3,6 +3,10 @@ import Form from "react-bootstrap/Form";
 import * as fcl from "@onflow/fcl";
 import { useState } from "react";
 import { mintNFT } from "../cadence/transactions/mint_nft.js";
+import { destroyAllNFT } from "../cadence/transactions/destroyall.js";
+import { unlist } from "../cadence/transactions/unlist_nft.js";
+
+
 import { create as ipfsClient } from "ipfs-http-client";
 import { Buffer } from "buffer";
 import Spinner from "react-bootstrap/Spinner";
@@ -118,6 +122,66 @@ function BasicExample() {
       alert(error);
     }
   };
+
+  const destroy = async (e) => {
+    setTxInProgress(true);
+    setTxStatus(-1);
+    handleShow();
+    try {
+      const transactionId = await fcl.mutate({
+        cadence: destroyAllNFT,
+        args: (arg, t) => [          
+        ],
+        payer: fcl.authz,
+        proposer: fcl.authz,
+        authorizations: [fcl.authz],
+        limit: 999,
+      });
+      console.log(transactionId);
+
+      setTxId(transactionId);
+      fcl.tx(transactionId).subscribe((res) => {
+        setTxStatus(res.status);
+        setTxStatusCode(res.statusCode);
+        console.log("destroy", res);
+      });
+    } catch (error) {
+      console.log("Error minting", error);
+      handleClose();
+      setTxInProgress(false);
+      alert(error);
+    }
+  };
+
+  const Unlist = async (e) => {
+    setTxInProgress(true);
+    setTxStatus(-1);
+    handleShow();
+    try {
+      const transactionId = await fcl.mutate({
+        cadence: unlist,
+        args: (arg, t) => [          
+        ],
+        payer: fcl.authz,
+        proposer: fcl.authz,
+        authorizations: [fcl.authz],
+        limit: 999,
+      });
+      console.log(transactionId);
+
+      setTxId(transactionId);
+      fcl.tx(transactionId).subscribe((res) => {
+        setTxStatus(res.status);
+        setTxStatusCode(res.statusCode);
+        console.log("destroy", res);
+      });
+    } catch (error) {
+      console.log("Error minting", error);
+      handleClose();
+      setTxInProgress(false);
+      alert(error);
+    }
+  };
   return (
     <div className="container">
       <h3 className="text-center mb-4 mt-4">NFT Minting</h3>
@@ -222,6 +286,24 @@ function BasicExample() {
           style={{ "margin-left": "193px" }}
         >
           Mint
+        </Button>
+        <Button
+          variant="primary"
+          className="col-1 container"
+          style={{ "margin-left": "193px" }}
+          onClick= {()=> destroy()}
+
+        >
+          Destroy
+        </Button>
+        <Button
+          variant="primary"
+          className="col-1 container"
+          style={{ "margin-left": "193px" }}
+          onClick= {()=> Unlist()}
+
+        >
+          Unlist
         </Button>
       </Form>
       {/* <Transaction txId={txId} txInProgress={txInProgress} txStatus={txStatus} txStatusCode={txStatusCode} /> */}

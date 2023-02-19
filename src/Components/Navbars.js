@@ -11,6 +11,7 @@ import * as fcl from "@onflow/fcl";
 import { Link } from "react-router-dom";
 import { getBalance } from "../cadence/scripts/get_balance";
 import { getTokenBalance } from "../cadence/scripts/get_token_balance";
+import { getUsdcBalance } from "../cadence/scripts/get_USDC_balance";
 import { mintTokenTx } from "../cadence/transactions/mint_token";
 import { accountInfoTx } from "../cadence/scripts/get_account_info";
 
@@ -26,6 +27,8 @@ function NavScrollExample(props) {
 
   const [flow, setflow] = useState(0);
   const [balance, setbalance] = useState(0);
+  const [Usdcbalance, setUsdcbalance] = useState(0);
+
 
   const getUserFlow = async (address) => {
     try {
@@ -48,6 +51,19 @@ function NavScrollExample(props) {
       });
       console.log(result);
       setbalance(result);
+    } catch (error) {
+      // console.log("error", error)
+    }
+  };
+
+  const getUserUsdc = async (address) => {
+    try {
+      const result = await fcl.query({
+        cadence: getUsdcBalance,
+        args: (arg, t) => [arg(address, t.Address)],
+      });
+      console.log("usdc", result);
+      setUsdcbalance(result);
     } catch (error) {
       // console.log("error", error)
     }
@@ -154,13 +170,14 @@ function NavScrollExample(props) {
           {props.address && props.address.addr ? (
             <Navbar.Text className="mx-2">
               <button onClick={getUserFlow(props.address.addr)} hidden></button>
+              <button onClick={getUserUsdc(props.address.addr)} hidden></button>
               <button
                 onClick={getUserToken(props.address.addr)}
                 hidden
               ></button>
               Token: <a style={{ color: "blue" }}>{Number(balance)} Rumble</a>
               <a> </a>
-              Balance: <a style={{ color: "blue" }}>{Number(flow).toFixed(2)} FLOW</a>
+              Balance: <a style={{ color: "blue" }}>{Number(Usdcbalance).toFixed(2)} USDC # {Number(flow).toFixed(2)} FLOW</a>
               <a> </a>
               Address: <a style={{ color: "blue" }}>{props.address.addr}</a>
             </Navbar.Text>

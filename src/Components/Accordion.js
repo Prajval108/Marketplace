@@ -1,12 +1,14 @@
 import { Button } from "react-bootstrap";
 import { setupUserTx } from "../cadence/transactions/setup_user.js";
 import { setupVaultTx } from "../cadence/transactions/create_vault.js";
+import { setupVaultForUsdcTx } from "../cadence/transactions/create_vault_USDC";
 import * as fcl from "@onflow/fcl";
 import Collection from "../Collection.js";
 import { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import { checkVaultTx } from "../cadence/scripts/check_vault";
 import { checkCollectionTx } from "../cadence/scripts/check_collection";
+import { checkUsdcVaultTx } from "../cadence/scripts/check_vault_USDC.js";
 import { getNFTsScript } from "../cadence/scripts/get_nfts.js";
 import { getSaleNFTsScript } from "../cadence/scripts/get_sale_nfts";
 import Card from "../Components/cards";
@@ -62,8 +64,25 @@ function AlwaysOpenExample() {
     alert("Congratulation, Your Token Vault successfully created");
   };
 
+  const setupUsdcVault = async () => {
+    const transactionId = await fcl.mutate({
+      cadence: setupVaultForUsdcTx,
+      args: (arg, t) => [],
+      payer: fcl.authz,
+      proposer: fcl.authz,
+      authorizations: [fcl.authz],
+      limit: 999,
+    });
+    console.log(transactionId);
+    // fcl.tx(transactionId).subscribe(setTxStatus);
+    var response = await fcl.tx(transactionId).onceSealed();
+    console.log("response", response);
+    alert("Congratulation, Your Token Vault successfully created");
+  };
+
   const [VStatus, setVStatus] = useState(true);
   const [CStatus, setCStatus] = useState(true);
+  const [UsdcVaultStatus, setUsdcVaultStatus] = useState(true)
   const VaultStatus = async () => {
     if (User.loggedIn)
       try {
@@ -92,10 +111,25 @@ function AlwaysOpenExample() {
       }
   };
 
+  const CheckUsdcVaultStatus = async () => {
+    if (User.loggedIn)
+      try {
+        const result = await fcl.query({
+          cadence: checkUsdcVaultTx,
+          args: (arg, t) => [arg(User.addr, t.Address)],
+        });
+        console.log("usdt vault status", result);
+        setUsdcVaultStatus(result);
+      } catch (error) {
+        console.log("error", error);
+      }
+  };
+
   useEffect(() => {
     if (User?.addr) {
       VaultStatus();
       CollectionStatus();
+      CheckUsdcVaultStatus();
     }
   }, [User]);
 
@@ -155,6 +189,16 @@ function AlwaysOpenExample() {
           onClick={() => setupVault()}
         >
           Setup Vault
+        </Button>
+      )}
+       {UsdcVaultStatus ? null : (
+        <Button
+          variant="success"
+          className="container"
+          style={{ "max-width": "38%", "margin-left": "30%" }}
+          onClick={() => setupUsdcVault()}
+        >
+          Setup USDC Vault
         </Button>
       )}
       <Form className="d-flex container my-2" style={{ "max-width": "64%" }}>
